@@ -202,14 +202,18 @@ You will find functions such as `searchData()` and `storeData()` in supabase.js 
 So this little server will generate response and will send to the frontend (you can see frontend code on this repo)
 
 ## Running my code
-Simply clone the repo
-Navigate into cloned folder and then to backend
+Simply clone the repo <br/>
+`git clone https://github.com/AbdurehmanSaleemi/yourAIAssistant.git` <br/>
+Navigate into cloned folder and then to backend <br/>
+`cd yourAIAssistant` <br/>
+`cd backend` <br/>
 
 Type `npm install`
-then type `npm start
+then type `npm start`
 
 Now the local server will start on port 3001 and you can start frontend too
 Now navigate back to root of the folder
+<br/>
 Type `npm run dev` and it'll run the development server and will also show you port and address
 I am using VITE BUILD TOOL for react frontend
 
