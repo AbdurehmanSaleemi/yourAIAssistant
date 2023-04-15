@@ -58,33 +58,35 @@ Create an account on Supabase and after that create a new project. After creatin
     embedding vector(1536)  -- 1536 works for OpenAI embeddings, change if needed  
     );  
       
-    -- Create a function to search for documents  
-    create  function match_documents (  
-    query_embedding vector(1536),  
-    match_count int  
-    )  returns  table  (  
-    id bigint,  
-    content text,  
-    metadata jsonb,  
-    similarity float  
-    )  
-    language plpgsql  
-    as $$  
-    #variable_conflict use_column  
-    begin  
-    return query  
-    select  
-    id,  
-    content,  
-    metadata,  
-    1  -  (documents.embedding <=> query_embedding)  as similarity  
-    from documents  
-    order  by documents.embedding <=> query_embedding  
-    limit match_count;  
-    end;  
-    $$;
+    create function match_data (
+  	query_embedding vector(1536),
+ 	match_count int
+	) returns table (
+  	id bigint,
+	  content text,
+	  similarity float
+	)
+	language plpgsql
+	as $$
+	#variable_conflict use_column
+	begin
+	  return query
+	  select
+	    id,
+	    content,
+	    1 - (documents.embedding <=> query_embedding) as similarity
+	  from documents
+	  order by documents.embedding <=> query_embedding
+	  limit match_count;
+	end;
+	$$;
+
+-- Create an index to be used by the search function
+create index on documents
+  using ivfflat (embedding vector_cosine_ops)
+  with (lists = 100);
 ```
-   Run this query and it will return a new table named "documents" and function "match_documents"
+   Run this query and it will return a new table named "documents" and function "match_data"
 
 Table `documents` will store our lines and paragraphs and their vectors
 Function `match_documents` will match user query with table data and return most appropriate result.
