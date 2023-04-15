@@ -93,7 +93,7 @@ Function `match_documents` will match user query with table data and return most
 
 Now we have to build actual tool that'll use all power of Langchain to get what we wanted.
 But instead of going this path, i went with my own idea
-So my ideas was fairly simple
+So my idea was fairly simple
 - Divide the data using Langchain TextSplitter Function
 - Generate its Embeddings using OpenAI API
 - Upload them to supabase
