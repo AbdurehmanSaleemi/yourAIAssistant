@@ -46,8 +46,8 @@ Here are the steps anyone can follow to make ChatGPT their own personal assistan
 ## Step 1: Prepare Database (Supabase)
 
 Create an account on Supabase and after that create a new project. After creating new project, simply go to SQL Editor and paste this query :
-
-        -- Enable the pgvector extension to work with embedding vectors  
+```SQL
+ -- Enable the pgvector extension to work with embedding vectors  
     create extension vector;  
       
     -- Create a table to store your documents  
@@ -83,8 +83,7 @@ Create an account on Supabase and after that create a new project. After creatin
     limit match_count;  
     end;  
     $$;
-
-   
+```
    Run this query and it will return a new table named "documents" and function "match_documents"
 
 Table `documents` will store our lines and paragraphs and their vectors
@@ -102,76 +101,78 @@ So my ideas was fairly simple
 
 Here is the code of it :
 
-    // Initialize the OpenAI API
-    const config = new Configuration({
-        apiKey: process.env.OPENAI_KEY
-    });
-    const openai = new OpenAIApi(config);
-    const PORT = process.env.PORT || 3001;
-    
-    // Load the documents from the pdf file
-    const loader = new PDFLoader("journal.pdf", {
-        // you may need to add `.then(m => m.default)` to the end of the import
-        pdfjs: () => import("pdf-parse/lib/pdf.js/v1.10.100/build/pdf.js"),
-    });
-    const docs = await loader.load();
-    
-    // Split the documents into chunks of 4000 characters with an overlap of 200 characters
-    const splitter = new RecursiveCharacterTextSplitter({
-        chunkSize: 4000,
-        chunkOverlap: 200,
-    });
-    
-    
-    // Function to get the embeddings of the documents and store them in the database
-    
-    const getEmbeddings = async () => {
-        for (var i = 0; i < docs.length; i++) {
-            const chunks = await splitter.createDocuments([docs[i].pageContent]);
-            // remove non-ascii characters
-    
-            chunks.forEach((chunk) => {
-                chunk.pageContent = chunk.pageContent.replace(/\x00/g, '');
+```javascript
+// Initialize the OpenAI API
+const config = new Configuration({
+    apiKey: process.env.OPENAI_KEY
+});
+const openai = new OpenAIApi(config);
+const PORT = process.env.PORT || 3001;
+
+// Load the documents from the pdf file
+const loader = new PDFLoader("journal.pdf", {
+    // you may need to add `.then(m => m.default)` to the end of the import
+    pdfjs: () => import("pdf-parse/lib/pdf.js/v1.10.100/build/pdf.js"),
+});
+const docs = await loader.load();
+
+// Split the documents into chunks of 4000 characters with an overlap of 200 characters
+const splitter = new RecursiveCharacterTextSplitter({
+    chunkSize: 4000,
+    chunkOverlap: 200,
+});
+
+
+// Function to get the embeddings of the documents and store them in the database
+
+const getEmbeddings = async () => {
+    for (var i = 0; i < docs.length; i++) {
+        const chunks = await splitter.createDocuments([docs[i].pageContent]);
+        // remove non-ascii characters
+
+        chunks.forEach((chunk) => {
+            chunk.pageContent = chunk.pageContent.replace(/\x00/g, '');
+        });
+        console.log(chunks);
+
+        for (let j = 0; j < chunks.length; j++) {
+            const embeddings = await openai.createEmbedding({
+                model: "text-embedding-ada-002",
+                input: chunks[j].pageContent,
             });
-            console.log(chunks);
-    
-            for (let j = 0; j < chunks.length; j++) {
-                const embeddings = await openai.createEmbedding({
-                    model: "text-embedding-ada-002",
-                    input: chunks[j].pageContent,
-                });
-                storeData(chunks[j].pageContent, embeddings.data.data[0].embedding);
-            }
-            console.log(i);
+            storeData(chunks[j].pageContent, embeddings.data.data[0].embedding);
         }
+        console.log(i);
     }
-    
-    // run this only once to get the embeddings of the documents and store them in the database and after that comment it out
-    
-    //getEmbeddings();
-    
-    // converting user input to embedding
-    const createUserEmbedding = async (input) => {
-        const userEmbedding = await openai.createEmbedding({
-            model: "text-embedding-ada-002",
-            input: input,
-        });
-        return userEmbedding;
-    }
-    
-    // we are now passing user input and the data of PDF related to user input to ChatGPT
-    const generateResponse = async (input, context) => {
-        const response = await openai.createChatCompletion({
-            model: "gpt-3.5-turbo",
-            messages: [
-                {
-                    role: "assistant",
-                    content: `Answer user question: ${input} using context: ${context}. Dont user your own knowledge.`,
-                }
-            ]
-        });
-        return response;
-    }
+}
+
+// run this only once to get the embeddings of the documents and store them in the database and after that comment it out
+
+//getEmbeddings();
+
+
+
+const createUserEmbedding = async (input) => {
+    const userEmbedding = await openai.createEmbedding({
+        model: "text-embedding-ada-002",
+        input: input,
+    });
+    return userEmbedding;
+}
+
+const generateResponse = async (input, context) => {
+    const response = await openai.createChatCompletion({
+        model: "gpt-3.5-turbo",
+        messages: [
+            {
+                role: "assistant",
+                content: `Answer user question: ${input} using context: ${context}. Dont user your own knowledge.`,
+            }
+        ]
+    });
+    return response;
+}
+```
 
 So in this simple example we are loading PDF file using PDFLoader provided by Langchain & Also using TextSplitter to split the text into chunks of data.
 
@@ -179,7 +180,8 @@ I wrote the comment codes so you can understand it better.
 
 So here is the API endpoint i have created
 
-    app.post('/', async (req, res) => {
+```javascript
+app.post('/', async (req, res) => {
         const { query } = req.body;
         const userEmbedding = await createUserEmbedding(query);
         const [{ embedding }] = userEmbedding.data.data;
@@ -193,8 +195,9 @@ So here is the API endpoint i have created
             }
         );
     });
+```
 
-You will find functions such as `searchData()` and `storeData` in supabase.js file
+You will find functions such as `searchData()` and `storeData()` in supabase.js file
 
 So this little server will generate response and will send to the frontend (you can see frontend code on this repo)
 
