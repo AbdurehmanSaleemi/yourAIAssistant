@@ -101,8 +101,9 @@ So my idea was fairly simple
 - Upload them to supabase
 - Search through data everytime user enters something and return results
 
+First make .env file
 ```env
-OPEN_AI=YOUR_KEY
+OPENAI_KEY=YOUR_KEY
 SUPABASE_URL = YOUR_URL
 SUPABASE_KEY=YOUR_KEY
 ```
