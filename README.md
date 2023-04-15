@@ -213,6 +213,7 @@ then type `npm start`
 
 Now the local server will start on port 3001 and you can start frontend too
 Now navigate back to root of the folder
+`cd ..` <br/>
 <br/>
 Type `npm run dev` and it'll run the development server and will also show you port and address
 I am using VITE BUILD TOOL for react frontend
