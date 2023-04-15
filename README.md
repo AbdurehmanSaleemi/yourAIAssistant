@@ -89,7 +89,7 @@ create index on documents
    Run this query and it will return a new table named "documents" and function "match_data"
 
 Table `documents` will store our lines and paragraphs and their vectors
-Function `match_documents` will match user query with table data and return most appropriate result.
+Function `match_data` will match user query with table data and return most appropriate result.
 
 ## 2nd Step : Backend (NodeJS)
 
