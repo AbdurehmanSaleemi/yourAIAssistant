@@ -194,6 +194,8 @@ So here is the API endpoint i have created
         );
     });
 
+You will find functions such as `searchData()` and `storeData` in supabase.js file
+
 So this little server will generate response and will send to the frontend (you can see frontend code on this repo)
 
 ## Running my code
@@ -213,5 +215,3 @@ If you like it or find it helpful, Star it.
 
 You can fork it and can also suggest improvements.
 Thank you.
-
-
