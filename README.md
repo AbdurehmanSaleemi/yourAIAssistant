@@ -101,6 +101,12 @@ So my idea was fairly simple
 - Upload them to supabase
 - Search through data everytime user enters something and return results
 
+```env
+OPEN_AI=YOUR_KEY
+SUPABASE_URL = YOUR_URL
+SUPABASE_KEY=YOUR_KEY
+```
+
 Here is the code of it :
 
 ```javascript
@@ -217,6 +223,7 @@ Now the local server will start on port 3001 and you can start frontend too
 Now navigate back to root of the folder
 `cd ..` <br/>
 <br/>
+First type `npm install` and then
 Type `npm run dev` and it'll run the development server and will also show you port and address
 I am using VITE BUILD TOOL for react frontend
 
