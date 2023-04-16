@@ -32,7 +32,7 @@ Examples:
 
 ## Process
 
-This thing might seem really interest and hard as well. I'll not lie to you. It was hard to figure out but thanks to some youtube creators and open source community to make it look like simple
+This thing might seem really interesting and hard as well. I'll not lie to you. It was hard to figure out but thanks to some youtube creators and open source community to make it look like simple
 
 Here are the steps anyone can follow to make ChatGPT their own personal assistant
 - **Step One** : Prepare the data you need to convert into Embeddings and store them on Vector Store. In my given code, i simply downloaded a journal on AI Topic and used it as my source of data
